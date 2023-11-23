@@ -5,7 +5,7 @@ usage(){
     echo "    [ -h | --help ]             : shows help" 
     echo "    [ --action start|stop ]     : start or stop the website - mandatory"
     echo "    [ -l | --log ]              : shows logs on output"
-    echo "    [ -n | --name <string> ]    : lowercase name for docker container (default is dockersite). "
+    echo "    [ -n | --name <string> ]    : lowercase name for docker container (default is dockersite)"
     echo "Example : ./docksite.sh --action start -l"
 }
 
@@ -88,18 +88,14 @@ if [ $ACTION == start ]; then
 
     if [ ! -z $LOG ]; then
 	echo Building website
-        docker build -t $CONTAINER_NAME .
+        docker-compose up -d
 	problem_build $?
 	echo Launching website
-	docker run -p 3000:3000 $CONTAINER_NAME &
-	problem_run $?
     else
 	echo Building website
-	docker build -t $CONTAINER_NAME . > /dev/null 2>&1
+        docker-compose up -d > /dev/null 2>&1
 	problem_build $?
 	echo Launching website
-	docker run -p 3000:3000 $CONTAINER_NAME > /dev/null 2>&1 &
-	problem_run $?
     fi
 
     while [ -z "$DOCKER_ID" ]; do
@@ -118,7 +114,8 @@ elif [ $ACTION == stop ]; then
 	echo There is nothing to stop
     else
 	echo Stopping container $DOCKER_ID
-	echo The container $(docker stop $DOCKER_ID) has been stopped
+	docker-compose down
+	echo The container $DOCKER_ID has been stopped
     fi
     
 fi
