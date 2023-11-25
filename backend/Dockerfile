@@ -2,9 +2,8 @@ FROM python:3.10
 
 WORKDIR /backend
 
-RUN pip install Flask
-RUN pip install flask-cors
-RUN pip install gunicorn
+COPY requirements.txt .
+RUN pip install -r requirements.txt
 
 COPY . .
 

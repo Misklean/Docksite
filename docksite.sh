@@ -88,14 +88,16 @@ if [ $ACTION == start ]; then
 
     if [ ! -z $LOG ]; then
 	echo Building website
-        docker-compose up -d
+        docker-compose build
 	problem_build $?
 	echo Launching website
+	docker-compose up -d
     else
 	echo Building website
-        docker-compose up -d > /dev/null 2>&1
+        docker-compose build > /dev/null 2>&1
 	problem_build $?
 	echo Launching website
+	docker-compose up -d > /dev/null 2>&1
     fi
 
     while [ -z "$DOCKER_ID" ]; do
@@ -110,7 +112,7 @@ elif [ $ACTION == stop ]; then
     echo Searching for container ID
     DOCKER_ID="$(docker ps  | grep $CONTAINER_NAME | awk '{print $1}')"
     
-    if [ -z $DOCKER_ID ]; then
+    if [ -z "$DOCKER_ID" ]; then
 	echo There is nothing to stop
     else
 	echo Stopping container $DOCKER_ID

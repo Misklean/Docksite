@@ -1,0 +1,5 @@
+Flask==3.0.0
+Flask-Cors==4.0.0
+Pillow==9.0.1
+pyboy==1.6.9
+gunicorn==21.2.0
