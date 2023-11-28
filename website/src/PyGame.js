@@ -1,233 +1,266 @@
 import { useState, useEffect } from "react";
-import { loadPyodide } from "pyodide";
-import script from './main.py';
 
-const runScript = async (code) => {
-	const pyodide = await loadPyodide({
-	  indexURL : "https://cdn.jsdelivr.net/pyodide/v0.23.4/full"
-	});
-  
-	pyodide.loadPackage('https://pypi.org/project/pyboy/');
-	return await pyodide.runPythonAsync(code);
-  }
   
 const PyGame = () => {
-	const [output, setOutput] = useState("(loading...)");
+    const [data, setData] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const [err, setErr] = useState('');
 
-	useEffect(() => {
-	  const run = async () => {
-		const scriptText = await (await fetch(script)).text();
-		const out = await runScript(scriptText);
-		setOutput(out);
-	  }
-	  run();
-  
-	}, []);
-  
-	return (
-	  <div className="App">
-		  <p>
-			{output}
-		  </p>
-	  </div>
-	);
-  
-  }
+    useEffect(() => {
+    const gameLoop = () => {
+      handleGetGameImage();
+      const timeout = setTimeout(gameLoop, 1000 / 60);
+      return () => clearTimeout(timeout);
+    };
 
-//     const [data, setData] = useState(null);
-//     const [isLoading, setIsLoading] = useState(false);
-//     const [err, setErr] = useState('');
+    window.requestAnimationFrame(gameLoop);
+  }, []);
 
-//     const handleGetGameImage = async () => {
-// 	setIsLoading(true);
+  const handleGetGameImage = async () => {
+    setIsLoading(true);
 
-// 	try {
-// 	    const response = await fetch('http://127.0.0.1:5000/pygame', {
-// 		method: 'GET',
-// 		headers: {
-// 		    "Content-Type": 'application/json',
-// 		}
-// 	    });
+    try {
+      const response = await fetch('http://127.0.0.1:5000/pygame', {
+        method: 'GET',
+        headers: {
+          "Content-Type": 'application/json',
+        },
+      });
 
-// 	    if (!response.ok) {
-// 		console.log('not good');
-// 		throw new Error(`Error! status: ${response.status}`);
-// 	    }
+      if (!response.ok) {
+        console.log('not good');
+        throw new Error(`Error! status: ${response.status}`);
+      }
 
-// 	    console.log("WE DID IT");
-	    
-// 	    const byteData = await response.arrayBuffer();
-// 	    const imageData = btoa(String.fromCharCode(...new Uint8Array(byteData)));
+      const byteData = await response.arrayBuffer();
+      const imageData = btoa(String.fromCharCode(...new Uint8Array(byteData)));
 
-// 	    setData(imageData);
-// 	} catch (err) {
-// 	    setErr(err.message);
-// 	} finally {
-// 	    setIsLoading(false);
-// 	}
+      setData(imageData);
+    } catch (err) {
+      setErr(err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-//     };
     
-//     const handlePostActionLeftArrow = async () => {
-// 	setIsLoading(true);
+    const handlePostActionLeftArrow = async () => {
+	setIsLoading(true);
 
-// 	try {
-// 	    const response = await fetch('http://127.0.0.1:5000/pygame/action/leftarrow', {
-// 		method: 'POST',
-// 		headers: {
-// 		    "Content-Type": 'application/json',
-// 		},
-// 		body: JSON.stringify({})
-// 	    });
+	try {
+	    const response = await fetch('http://127.0.0.1:5000/pygame/action/leftarrow', {
+		method: 'POST',
+		headers: {
+		    "Content-Type": 'application/json',
+		},
+		body: JSON.stringify({})
+	    });
 
-// 	    if (!response.ok) {
-// 		console.log('not good');
-// 		throw new Error(`Error! status: ${response.status}`);
-// 	    }
+	    if (!response.ok) {
+		console.log('not good');
+		throw new Error(`Error! status: ${response.status}`);
+	    }
 
-// 	    const result = await response.json();
+	    const result = await response.json();
 
-// 	    console.log('result is: ', JSON.stringify(result, null, 4));
+	    console.log('result is: ', JSON.stringify(result, null, 4));
 
-// 	    setData(result);
-// 	} catch (err) {
-// 	    setErr(err.message);
-// 	} finally {
-// 	    setIsLoading(false);
-// 	}
-//     };
+	    setData(result);
+	} catch (err) {
+	    setErr(err.message);
+	} finally {
+	    setIsLoading(false);
+	}
+    };
 
-//     const handlePostActionRightArrow = async () => {
-// 	setIsLoading(true);
+    const handlePostActionRightArrow = async () => {
+	setIsLoading(true);
 
-// 	try {
-// 	    const response = await fetch('http://127.0.0.1:5000/pygame/action/rightarrow', {
-// 		method: 'POST',
-// 		headers: {
-// 		    "Content-Type": 'application/json',
-// 		},
-// 		body: JSON.stringify({})
-// 	    });
+	try {
+	    const response = await fetch('http://127.0.0.1:5000/pygame/action/rightarrow', {
+		method: 'POST',
+		headers: {
+		    "Content-Type": 'application/json',
+		},
+		body: JSON.stringify({})
+	    });
 
-// 	    if (!response.ok) {
-// 		console.log('not good');
-// 		throw new Error(`Error! status: ${response.status}`);
-// 	    }
+	    if (!response.ok) {
+		console.log('not good');
+		throw new Error(`Error! status: ${response.status}`);
+	    }
 
-// 	    const result = await response.json();
+	    const result = await response.json();
 
-// 	    console.log('result is: ', JSON.stringify(result, null, 4));
+	    console.log('result is: ', JSON.stringify(result, null, 4));
 
-// 	    setData(result);
-// 	} catch (err) {
-// 	    setErr(err.message);
-// 	} finally {
-// 	    setIsLoading(false);
-// 	}
-//     };
+	    setData(result);
+	} catch (err) {
+	    setErr(err.message);
+	} finally {
+	    setIsLoading(false);
+	}
+    };
 
-//     const handlePostActionUpArrow = async () => {
-// 	setIsLoading(true);
+    const handlePostActionUpArrow = async () => {
+	setIsLoading(true);
 
-// 	try {
-// 	    const response = await fetch('http://127.0.0.1:5000/pygame/action/uparrow', {
-// 		method: 'POST',
-// 		headers: {
-// 		    "Content-Type": 'application/json',
-// 		},
-// 		body: JSON.stringify({})
-// 	    });
+	try {
+	    const response = await fetch('http://127.0.0.1:5000/pygame/action/uparrow', {
+		method: 'POST',
+		headers: {
+		    "Content-Type": 'application/json',
+		},
+		body: JSON.stringify({})
+	    });
 
-// 	    if (!response.ok) {
-// 		console.log('not good');
-// 		throw new Error(`Error! status: ${response.status}`);
-// 	    }
+	    if (!response.ok) {
+		console.log('not good');
+		throw new Error(`Error! status: ${response.status}`);
+	    }
 
-// 	    const result = await response.json();
+	    const result = await response.json();
 
-// 	    console.log('result is: ', JSON.stringify(result, null, 4));
+	    console.log('result is: ', JSON.stringify(result, null, 4));
 
-// 	    setData(result);
-// 	} catch (err) {
-// 	    setErr(err.message);
-// 	} finally {
-// 	    setIsLoading(false);
-// 	}
-//     };
+	    setData(result);
+	} catch (err) {
+	    setErr(err.message);
+	} finally {
+	    setIsLoading(false);
+	}
+    };
 
-//     const handlePostActionDownArrow = async () => {
-// 	setIsLoading(true);
+    const handlePostActionDownArrow = async () => {
+	setIsLoading(true);
 
-// 	try {
-// 	    const response = await fetch('http://127.0.0.1:5000/pygame/action/downarrow', {
-// 		method: 'POST',
-// 		headers: {
-// 		    "Content-Type": 'application/json',
-// 		},
-// 		body: JSON.stringify({})
-// 	    });
+	try {
+	    const response = await fetch('http://127.0.0.1:5000/pygame/action/downarrow', {
+		method: 'POST',
+		headers: {
+		    "Content-Type": 'application/json',
+		},
+		body: JSON.stringify({})
+	    });
 
-// 	    if (!response.ok) {
-// 		console.log('not good');
-// 		throw new Error(`Error! status: ${response.status}`);
-// 	    }
+	    if (!response.ok) {
+		console.log('not good');
+		throw new Error(`Error! status: ${response.status}`);
+	    }
 
-// 	    const result = await response.json();
+	    const result = await response.json();
 
-// 	    console.log('result is: ', JSON.stringify(result, null, 4));
+	    console.log('result is: ', JSON.stringify(result, null, 4));
 
-// 	    setData(result);
-// 	} catch (err) {
-// 	    setErr(err.message);
-// 	} finally {
-// 	    setIsLoading(false);
-// 	}
-//     };
+	    setData(result);
+	} catch (err) {
+	    setErr(err.message);
+	} finally {
+	    setIsLoading(false);
+	}
+    };
 
-//     useEffect(() => {
-// 	const keyDownHandler = event => {
-// 	    console.log('User pressed: ', event.key);
+        const handlePostActionButtonA = async () => {
+	setIsLoading(true);
 
-// 	    if (event.key === 'ArrowLeft') {
-// 		event.preventDefault();
-// 		handlePostActionLeftArrow();
-// 	    }
-// 	    else if (event.key === 'ArrowRight') {
-// 		event.preventDefault();
-// 		handlePostActionRightArrow();
-// 	    }
-// 	    else if (event.key === 'ArrowUp') {
-// 		event.preventDefault();
-// 		handlePostActionUpArrow();
-// 	    }
-// 	    else if (event.key === 'ArrowDown') {
-// 		event.preventDefault();
-// 		handlePostActionDownArrow();
-// 	    }
-// 	};
+	try {
+	    const response = await fetch('http://127.0.0.1:5000/pygame/action/buttona', {
+		method: 'POST',
+		headers: {
+		    "Content-Type": 'application/json',
+		},
+		body: JSON.stringify({})
+	    });
 
-// 	document.addEventListener('keydown', keyDownHandler);
+	    if (!response.ok) {
+		console.log('not good');
+		throw new Error(`Error! status: ${response.status}`);
+	    }
 
-// 	return () => {
-// 	    document.removeEventListener('keydown', keyDownHandler);
-// 	};
-//     }, []);
+	    const result = await response.json();
 
-//     const gameLoop = () => {
-//     handleGetGameImage();
-//     window.requestAnimationFrame(gameLoop);
-//   };
+	    console.log('result is: ', JSON.stringify(result, null, 4));
 
-//   useEffect(() => {
-//     gameLoop();
-//     return () => window.cancelAnimationFrame(gameLoop);
-//   }, []);
+	    setData(result);
+	} catch (err) {
+	    setErr(err.message);
+	} finally {
+	    setIsLoading(false);
+	}
+	};
 
+            const handlePostActionButtonB = async () => {
+	setIsLoading(true);
 
-// return (
-//   <div>
-//     <img src={`data:image/png;base64,${data}`} alt=""/>
-//   </div>
-// );
+	try {
+	    const response = await fetch('http://127.0.0.1:5000/pygame/action/buttonb', {
+		method: 'POST',
+		headers: {
+		    "Content-Type": 'application/json',
+		},
+		body: JSON.stringify({})
+	    });
+
+	    if (!response.ok) {
+		console.log('not good');
+		throw new Error(`Error! status: ${response.status}`);
+	    }
+
+	    const result = await response.json();
+
+	    console.log('result is: ', JSON.stringify(result, null, 4));
+
+	    setData(result);
+	} catch (err) {
+	    setErr(err.message);
+	} finally {
+	    setIsLoading(false);
+	}
+    };
+
+    useEffect(() => {
+	const keyDownHandler = event => {
+	    console.log('User pressed: ', event.key);
+
+	    if (event.key === 'ArrowLeft') {
+		event.preventDefault();
+		handlePostActionLeftArrow();
+	    }
+	    else if (event.key === 'ArrowRight') {
+		event.preventDefault();
+		handlePostActionRightArrow();
+	    }
+	    else if (event.key === 'ArrowUp') {
+		event.preventDefault();
+		handlePostActionUpArrow();
+	    }
+	    else if (event.key === 'ArrowDown') {
+		event.preventDefault();
+		handlePostActionDownArrow();
+	    }
+	    else if (event.key === 'a') {
+		event.preventDefault();
+		handlePostActionButtonA();
+	    }
+	    else if (event.key === 'b') {
+		event.preventDefault();
+		handlePostActionButtonB();
+	    }
+	};
+
+	document.addEventListener('keydown', keyDownHandler);
+
+	return () => {
+	    document.removeEventListener('keydown', keyDownHandler);
+	};
+    }, []);
+
+	return (
+	<div>
+		<img src={`data:image/png;base64,${data}`} alt=""/>
+	</div>
+	);
+
+}
 
 export default PyGame;
