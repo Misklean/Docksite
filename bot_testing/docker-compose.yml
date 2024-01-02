@@ -1,0 +1,23 @@
+version: "3.9"
+
+services:
+  discord_bot:
+    build: ./discord_bot
+    container_name: "HomeSweetHome_discord_bot"
+    volumes:
+      - shared-volume:/tmp/log
+    environment:
+        - TZ=Europe/Paris
+
+
+  gekko_bot:
+    build: ./gekko
+    container_name: "gekko_trading_bot"
+    volumes:
+      - shared-volume:/tmp/log
+    environment:
+        - TZ=Europe/Paris
+
+
+volumes:
+  shared-volume:
