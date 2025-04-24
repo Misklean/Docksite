@@ -1,6 +1,0 @@
-{
-  "dependencies": {
-    "talib": "^1.1.5",
-    "tulind": "^0.8.20"
-  }
-}

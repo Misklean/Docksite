@@ -1,0 +1,14 @@
+alpaca-py
+configparser
+joblib
+matplotlib
+neuralforecast
+numpy
+pandas
+scikit-learn
+ta-lib
+tqdm
+torch
+utilsforecast
+xgboost
+psycopg2-binary
